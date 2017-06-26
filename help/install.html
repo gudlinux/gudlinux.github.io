@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+      	<head>
+              	<link rel="shortcut icon" href="../images/favicon.ico"/>
+                <title>GUD Install Guide</title>
+                <meta name="description"content="How to install GUD Linux">
+                <style type="text/css">
+                        #align {
+                                position: absolute;
+                                left: 30px;
+                                width: 100%;
+                        }
+                </style>
+        </head>
+
+        <body>
+              	<div id="align">
+                        <font face="times new roman" color="#002080" size="5">
+                                <h1><center>GUD Linux Installation Guide</center></h1>
+                        </font>
+                        <font color="000000" size="4">
+				-----------------------------------------------------------------------
+				<br>| Welcome to GUD Linux installation guide :) |
+				<br>-----------------------------------------------------------------------
+				<br>
+				<br>*** This guide will explain you how to install GUD Linux without destroying anything :D ***
+				<br>
+				<br>*** This guide won't show you how to create a bootable USB/DVD from a GUD Live disk iso,
+				<br>    so, if you don't know how to do that, you have to google it ***
+				<br>
+				<br>If you haven't bored, yet, we can begin!
+                                <br>
+                                <br>------------------------------------------------------------------------
+                                <br>| THE BEGIN (TEMPORARY KEYMAP AND I3) |
+                                <br>------------------------------------------------------------------------
+                                <br>
+                                <br>After booted GUD Live, the default keymap is the US' one, so, if you want to change it according to your keyboard layout, run:
+                                <br>
+                                <br>$ loadkeys keymap
+                                <br>
+                                <br>Where "keymap" is the keymap you want
+                                <br>
+                                <br>GUD Live has also an Xorg environment with i3wm installed. If you want it, you have to create a "temporary" user with.
+                                <br>
+                                <br>$ useradd user -p password -m
+                                <br>
+                                <br>Then start lightdm with:
+                                <br>
+                                <br>$ service xdm start
+                                <br>
+                                <br>and login with your just-created account
+                                <br>
+                                <br>
+                                <br>-------------------------------------------------
+                                <br>| THE BEGIN (PARTITIONING) |
+                                <br>-------------------------------------------------
+                                <br>
+                                <br>First of all you have to boot GUD Live Disk USB/DVD.
+                                <br>Then you have to create a partition which will contain GUD Linux.
+                                <br>You can create it with tools like parted or fdisk directly from GUD Linux Live Disk, but if you
+                                <br>don't know how to use them, it's better that you do it with a GUI software on Windows, or Gparted on another GNU/Linux distribution.
+                                <br>If you didn't create the partition on GUD Linux Live Disk, you can now boot it!
+                                <br>
+                                <br>After created the partition, you have to format it to your favourite filesystem; you can choose it from
+                                <br>a variety of filesystems like ext4,ext3,ext2,btrfs,ntfs(please not that!).
+                                <br>If you are unsure of which one you want to use, you can google it!
+                                <br>In Linux kernel, partitions are found in /dev/sdXY where X is the drive (hdd,usb,ssd...) and Y is the partition number.
+                                <br>An example can be an USB drive, which is in /dev/sdb, and if i want to mount the partition number 1, it will be located in /dev/sdb1
+                                <br>Note that drive letters' may change, and sometimes /dev/sda can be the USB drive, and /dev/sdb can be the HDD, so,
+                                <br>you have to verify that before proceeding with the risk of destroying everything :)
+                                <br>
+                                <br>Now, assuming that your GUD partition is /dev/sdXY and your filesystem is named "myfs", you have to do the following to format to
+                                <br>the filesystem you decided:
+                                <br>
+                                <br>$ mkfs.myfs /dev/sdXY
+                                <br>
+                                <br>*** Note that you can't format a mounted partition, so, you have to umnount it before proceeding with this command:
+                                <br>    $ umount /dev/sdXY ***
+                                <br>
+                                <br>
+                                <br>Now that the future GUD partition is ready, you can start the ride!
+                                <br>
+                                <br>-------------------------------------------------
+                                <br>| MOUNTING GUD PARTITION |
+                                <br>-------------------------------------------------
+                                <br>
+                                <br>First, you have to mount the partition (as read-write), so that you can install GUD Linux inside it.
+                                <br>To do that, run the following command:
+                                <br>
+                                <br>$ mount /dev/sdXY /mnt
+                                <br>
+                                <br>You can change /mnt to your favourite directory; to create a directory here's the command:
+                                <br>
+                                <br>$ mkdir path
+                                <br>
+                                <br>where "path" is the path where you want to create the directory+directory name
+                                <br>
+                                <br>Now that the partition is mounted, you have to download the GUD Linux Tarball, but to download it, you must be connected to the Internet.
+                                <br>
+                                <br>
+                                <br>----------------------------------------------------------
+                                <br>| CONNECTING TO THE INTERNET |
+                                <br>----------------------------------------------------------
+                                <br>
+                                <br>You can connect to Internet via WiFi or ethernet: Here's how:
+                                <br>
+                                <br>:) WIFI:
+                                <br>
+                                <br>To connect your WiFi card (PCIe or USB) to the Internet, you can use wpa_supplicant.
+                                <br>Since dhcpcd service is ran on boot, you don't have to put any insterface up, but if it doesn't, you can do it with:
+                                <br>
+                                <br>$ ip link set interface up
+                                <br>
+                                <br>where "insterface" is the interface name.
+                                <br>
+                                <br>You can check what interfaces are up with:
+                                <br>
+                                <br>$ ifconfig
+                                <br>
+                                <br>Now, if your connection uses WPA/WPA2 encryption use this command to create the config:
+                                <br>
+                                <br>$ wpa_passphrase ssid>config_name
+                                <br>
+                                <br>Then, after pressed enter, you'll see a blank line: there type your password and press enter
+                                <br>Here's an example of configuration where "test" is the ssid and "mypassword" is the password:
+                                <br>
+                                <br>++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                                <br># reading passphrase from stdin
+                                <br>network={
+                                <br>        ssid="test"
+                                <br>        #psk="mypassword"
+                                <br>        psk=eef1b016b5adae842514960c3b3e112fc4304b6970e7c30a1c8a7d63eb169ead
+                                <br>}
+                                <br>++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                                <br>
+                                <br>If the connection is open, which means that it's not protected (consider to protect it, especially if you don't want connection thieves ._.),
+                                <br>the configuration would be something like this (still using "test" as ssid):
+                                <br>
+                                <br>+++++++++++++++++++++++
+                                <br>network={
+                                <br>        ssid="test"
+                                <br>        key_mgmt="NONE"
+                                <br>}
+                                <br>+++++++++++++++++++++++
+                                <br>
+                                <br>If the connection uses WEP encryption, it's just impossible, since no one uses WEP encryption in 2017, so,
+                                <br>ask yourself "why?" and search it on google
+                                <br>
+                                <br>After created the config, you can connect to the internet with wpa_supplicant; you can do that with:
+                                <br>
+                                <br>$ wpa_supplicant -D nl80211 -i interface -c config_name -B
+                                <br>
+                                <br>;) ETHERNET:
+                                <br>
+                                <br>Just connect ethernet cable to your computer and you're ready to go
+                                <br>
+                                <br>*** Before crying, saying the link of GUD linux is broken, check that you are connected to the Internet with:
+                                <br>    $ ping google.com 
+                                <br>    Note that google.com is just an example, you can replace it with any site ***
+                                <br>
+                                <br>
+                                <br>------------------------------------------------
+                                <br>| GUD LINUX INSTALLATION |
+                                <br>------------------------------------------------
+                                <br>
+                                <br>Now that you are connected to the internet, you can download the latest GUD tarball, which you can find here:
+                                <br>
+                                <br>https://downloads.sourceforge.net/project/gudlinux-tar
+                                <br>
+                                <br>You can download it with Links browser; to do that use this command:
+                                <br>
+                                <br>$ links https://downloads.sourceforge.net/project/gudlinux-tar/gudlinux-latest.tar.xz
+                                <br>
+                                <br>Links is a web browser which runs on ttys. It has also a graphic interface which can be enabled with -g option
+                                <br>
+                                <br>If you prefer to download it with wget, you can use this command:
+                                <br>
+                                <br>$ wget https://downloads.sourceforge.net/project/gudlinux-tar/gudlinux-latest.tar.xz
+                                <br>
+                                <br>
+                                <br>Now, if it isn't, put the tarball in the root of GUD mounted partition.
+                                <br>
+                                <br>You can change directories with "cd" command and you can move files or directories with "mv" command. Here's his syntax:
+                                <br>
+                                <br>$ mv file(or dir)_path new_path
+                                <br>
+                                <br>Now let's cd to GUD partition's root and unpack the tarball, which contains GUD Linux. Here's how:
+                                <br>
+                                <br>$ tar xf GUDtarball.tar.xz
+                                <br>
+                                <br>Then you can delete the GUD tarball with:
+                                <br>
+                                <br>$ rm GUDtarball.tar.xz
+                                <br>
+                                <br>After unpacked GUD tarball it's the time to get into GUD Linux!
+                                <br>First you have to mount a couple of directories needed later, so, run these commands
+                                <br>
+                                <br>$ mount -t proc proc /mnt/proc
+                                <br>$ mount --rbind /dev /mnt/dev
+                                <br>$ mount --rbind /sys /mnt/sys
+                                <br>$ mount --make-rslave /dev
+                                <br>$ mount --make-rslave /sys
+                                <br>
+                                <br>where /mnt is the directory where you mounted GUD partition
+                                <br>
+                                <br>Now you can get into GUD Linux!
+                                <br>You can do it with:
+                                <br>
+                                <br>$ chroot GUD_partition_root
+                                <br>
+                                <br>Now you are inside GUD Linux at all effects!
+                                <br>And what does this mean?
+                                <br>It means that it's the time to configure GUD Linux!!!
+                                <br>
+                                <br>
+                                <br>----------------------------------------------------
+                                <br>| GUD LINUX CONFIGURATION |
+                                <br>----------------------------------------------------
+                                <br>
+                                <br>The configuration is the worst part of a GUD Linux installation :(
+                                <br>but don't worry, I'll help you ;) !!
+                                <br>
+                                <br>
+                                <br>-----------------
+                                <br>| KERNEL |
+                                <br>-----------------
+                                <br>
+                                <br>The kernel is the most important part of an OS, because it's the core and without it you can't neither boot a system.
+                                <br>As you can see in his name, GUD Linux uses linux kernel.
+                                <br>GUD Linux doesn't provide a kernel (except from the one which is in the Live), because wants their users to compile it themselves.
+                                <br>In particular, it wants users to create their own configuration for their own hardware, without including useless stuff like unneeded drivers.
+                                <br>But if you have no idea on how to do it, first, google how and try, and if you have no success, you can use the config in /boot directory.
+                                <br>
+                                <br>You can download linux kernel at https://www.kernel.org (use links browser to download it)
+                                <br>Then unpack the tarball with:
+                                <br>
+                                <br>$ tar xf tarball_name
+                                <br>
+                                <br>Then cd to the extracted tarball's dir.
+                                <br>Now:
+                                <br>
+                                <br>-_-) If you want to use default GUD config (worst choise) copy /boot/configname to the extracted kernel's dir
+                                <br>._.) If you want to create your own config (best choise), run:
+                                <br>
+                                <br>$ make menuconfig
+                                <br>
+                                <br>and create the best config for your computer!
+                                <br>
+                                <br>After created the config, you can compile the kernel with:
+                                <br>
+                                <br>$ make -j#
+                                <br>
+                                <br>where # is the number of you machine's CPU cores (not needed, but improves the speed of the compilation a lot)
+                                <br>
+                                <br>Now it's time to install the kernel: just do:
+                                <br>
+                                <br>$ make install
+                                <br>$ make modules_install
+                                <br>
+                                <br>In particular, make modules_install installs kernel modules ("m" in menuconfig) which are not loaded on boot
+                                <br>
+                                <br>----------------------
+                                <br>| INITRAMFS |
+                                <br>----------------------
+                                <br>
+                                <br>The initrd is also needed during boot, and GUD Linux has a script to generate it! Just run:
+                                <br>
+                                <br>$ mkinitramfs kernel_version
+                                <br>
+                                <br>where kernel_version is the version of the kernel you compiled.
+                                <br>This is needed because the script needs some modules. You can see what is the kernel version with:
+                                <br>
+                                <br>$ ls /lib/modules
+                                <br>
+                                <br>The output, which is the main directory of linux kernel modules, is also the directory/kernel_version needed by the script.
+                                <br>
+                                <br>--------------------------
+                                <br>| BOOTLOADER |
+                                <br>--------------------------
+                                <br>
+                                <br>The bootloader is needed to boot GUD partition, but it can also load other GNU/Linux/Windows... partitions.
+                                <br>GUD Linux has chosen GRUB as the default bootloader (version 2) because it simple to configure and powerful at the same time.
+                                <br>To install grub, run:
+                                <br>
+                                <br>$ grub-install /dev/sdX
+                                <br>
+                                <br>Where X is the drive which contains GUD partition.
+                                <br>Now that you have installed GRUB, you have to make his configuration. It's easy and can be done with:
+                                <br>
+                                <br>$ grub-mkconfig -o /boot/grub/grub.cfg
+                                <br>
+                                <br>
+                                <br>After installed the bootloader we can start the "customization" aspect!
+                                <br>
+                                <br>o.O) USERS
+                                <br>
+                                <br>First of all you have to assign a root password! Just run
+                                <br>
+                                <br>$ passwd
+                                <br>
+                                <br>and type the password you want two times.
+                                <br>
+                                <br>Now you may want create a new user; here's how:
+                                <br>
+                                <br>$ useradd username -p password -m -r
+                                <br>
+                                <br>Use -r only if you want to create a system account, otherwise skip it.
+                                <br>Also, change "username" and "password" with whatever you want.
+                                <br>
+                                <br>:) KEYMAP
+                                <br>
+                                <br>The default keymap in GUD Linux is the United States' one, so you may want to change it according to your keyboard layout: here's how:
+                                <br>Open the file /etc/conf.d/keymaps with vi/vim or nano. Here's how to do it:
+                                <br>
+                                <br>$ vim /etc/conf.d/keymaps
+                                <br>$ nano /etc/conf.d/keymaps
+                                <br>
+                                <br>*** Since vi is just a symlink of vim, if you run vi or vim, it will open the same text editor ***
+                                <br>
+                                <br>You now have to change "us" with the keymap you decided i.e. for italian keyboard the line becomes
+                                <br>
+                                <br>+++++++++++
+                                <br>keymap="it"
+                                <br>+++++++++++
+                                <br>
+                                <br>;) HOSTNAME
+                                <br>
+                                <br>After configured the keyboard, you have to create a hostname. Just open /etc/conf.d/hostname and (if you want) change "gudlinux" 
+                                <br>to whatever name you want i.e. if I want "test" as my hostname the line becomes:
+                                <br>
+                                <br>+++++++++++++++
+                                <br>hostname="test"
+                                <br>+++++++++++++++
+                                <br>
+                                <br>:/) HOSTS
+                                <br>
+                                <br>At this point, you may want to edit /etc/hosts and change "gudlinux" and "user" to whatever you want
+                                <br>
+                                <br>:O) DATE
+                                <br>
+                                <br>Another important aspect is the date. If you want to set your date, you can use ntpd command as follows:
+                                <br>
+                                <br>$ ntpd -qg
+                                <br>
+                                <br>Otherwise you can do it manually using date command
+                                <br>
+                                <br>
+                                <br>------------------------
+                                <br>| IT'S DONE!!! |
+                                <br>------------------------
+                                <br>
+                                <br>Now the ride is ended :(
+                                <br>You have a fully configured GUD Linux on your computer.
+                                <br>Now you can add your favourite services with
+                                <br>
+                                <br>$ rc-update add service default
+                                <br>
+                                <br>such as lightdm with:
+                                <br>
+                                <br>$ rc-update add xdm default
+                                <br>
+                                <br>Added services will start on boot. If want to deactivate a service just do:
+                                <br>
+                                <br>$ rc-update del service default
+                                <br>
+                                <br>So that if you don't want lightdm to be started at boot, anymore run:
+                                <br>
+                                <br>$ rc-update del xdm default
+                                <br>
+                                <br>*** All services are located in /etc/init.d ***
+                                <br>
+                                <br>*** As I wrote in the website of GUD, Xorg is preinstalled, and contains i3wm, which is a light window manager
+                                <br>    which can also run in old computers and run powerful graphical software like firefox, gtk... at the same time! ***
+                                <br>
+                                <br>Now it's time to say goodbye, so... come on, boot thiz GUD Linux and start being gud!!!
+                                <br>
+                                <br>
+			</font>
+		</div>
+	</body>
+</html>
